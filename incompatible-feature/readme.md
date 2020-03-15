@@ -1,3 +1,10 @@
+[Go documentation is incomplete](https://github.com/golang/go/issues/30791): there is no explanation what go directive in `go.mod` means.
+As usual, [the answer](https://github.com/golang/go/issues/30791#issuecomment-472217112) from the go team is:
+```
+nobody should ever have to worry about the "go" directive
+```
+
+
 This repo shows how go version the application was built with, go version in `go.mod` file and go version the application uses are interconnected.
 
 This repo uses [overlapping interfaces](https://github.com/golang/proposal/blob/master/design/6977-overlapping-interfaces.md) feature **introduced in 1.14**: interfaces can embed other interfaces with overlapping method sets.
