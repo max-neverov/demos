@@ -1,0 +1,5 @@
+module github.com/max-neverov/demos
+
+go 1.13
+
+require github.com/max-neverov/demos/incompatible-feature v0.0.1
