@@ -20,3 +20,10 @@ By changing the go build version in `Dockerfile` and `go.mod` file one can obtai
 | 1.13          | 1.14   | duplicate method Foo; note: module requires Go 1.14
 | 1.14          | 1.13   | duplicate method Foo
 | 1.14          | 1.14   | ok
+
+The last piece of the puzzle is a build tag: `// +build go1.14`.
+It does not interact with `go.mod` go version in any way, only go build version matters. As it states [in the documentation](https://golang.org/pkg/go/build/):
+
+```
+A build constraint, also known as a build tag ... lists the conditions under which a file should be included in the package.
+```
