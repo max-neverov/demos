@@ -2,11 +2,9 @@ package nonewfeatures
 
 import (
 	"fmt"
-
-	ab "github.com/max-neverov/demos/incompatible-feature"
 )
 
-type Foo struct{ ab.A }
+type Foo struct{}
 
 func (f Foo) Bar() {
 	fmt.Println("no new features in another package")
