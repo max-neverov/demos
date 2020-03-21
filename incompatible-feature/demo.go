@@ -1,5 +1,8 @@
 package ab
 
-func GetFT() int {
-	return 42
+type A interface{ Foo() }
+type B interface{ Foo() }
+type AB interface {
+	A
+	B
 }
