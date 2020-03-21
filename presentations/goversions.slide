@@ -1,0 +1,118 @@
+# Go Versions
+
+Go Guild
+2 Apr 2020
+Max Neverov
+
+
+## This talk
+
+- go build vs go.mod
+- imported libraries
+
+
+## Documentation
+
+.link https://github.com/golang/go/issues/30791 Go documentation is incomplete:
+: there is no explanation what go directive in `go.mod` means.
+
+.image goversions/img/issue-30791.png
+
+
+## Documentation
+
+As usual, [the answer](https://github.com/golang/go/issues/30791#issuecomment-472217112) from the go team is:
+
+
+> nobody should ever have to worry about the "go" directive
+
+
+## Documentation
+: be persistent!
+
+.link https://golang.org/doc/go1.12#modules go1.12 release
+
+
+>  go directive in a go.mod file now **indicates the version of the language** used by the files within that module. ... the go command will attempt to build the packages regardless [of the go directive], and will note the mismatch only if that build fails.
+
+
+## Documentation
+: be persistent!!
+
+**go help go.mod**
+
+> The expected language version, set by the go directive, determines which language features are available when compiling the module. Language features available in that version will be available for use.
+Language features removed in earlier versions, or added in later versions, will not be available. Note that the language version does not affect build tags, which are determined by the Go release being used.
+
+
+## Overlapping Interfaces
+
+[Overlapping interfaces](https://github.com/golang/proposal/blob/master/design/6977-overlapping-interfaces.md) feature was **introduced in 1.14**: interfaces can embed other interfaces with overlapping method sets.
+
+.code ../incompatible-feature/demo.go 
+
+
+## Result
+
+.html goversions/html/gomod_result_table.html
+
+
+## Build Constraint
+\
+    // +build go1.14
+
+
+: It does not interact with `go.mod` go version in any way, only go build version matters.
+As it states [in the documentation](https://golang.org/pkg/go/build/):
+
+> A build constraint, also known as a build tag ... lists the conditions under which a file should be included in the package.
+
+
+## Imported Libraries
+
+**demo.go**
+.code ../goversion/demo.go
+
+**go.mod**
+.code ../goversion/go.mod
+
+
+## Result
+
+.html goversions/html/gomod_import_lib_result_table.html
+
+
+## Result
+
+A project that uses go build v1.13 and defines go 1.13 in `go.mod` and imports a library with go 1.14 in `go.mod` but the library does
+not use new features, will be built without any error.
+
+A project with a prev. version of go (1.13 build, `go.mod`) **can still use** a library with new features from go 1.14 if the project does not import a package where the new features were declared.
+If the project use anything from the same package the features were introduced in (even from a different file) the build will fail.
+
+
+## Conclusion
+
+\
+-mod=readonly
+: go mod tidy also adds go version directive
+
+\
+-mod=vendor
+
+\
+Align local environment: go, go.mod, go-overlay.
+
+
+## Links
+
+.link https://talks.godoc.org/github.com/max-neverov/demos/presentations/goversions.slide this slides
+.link https://github.com/max-neverov/demos repo
+
+
+
+
+
+
+
+

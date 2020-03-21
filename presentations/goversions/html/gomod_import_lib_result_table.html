@@ -1,0 +1,28 @@
+<table style="width:100%">
+  <tr>
+    <th>Go Build Version</th>
+    <th>go.mod Version</th>
+    <th>Result</th>
+  </tr>
+  <tr>
+    <td>1.13</td>
+    <td>1.13</td>
+    <td>duplicate method Foo; note: module requires Go 1.14</td>
+  </tr>
+  <tr>
+    <td>1.13</td>
+    <td>1.14</td>
+    <td>duplicate method Foo; note: module requires Go 1.14</td>
+  </tr>
+  <tr>
+    <td>1.14</td>
+    <td>1.13</td>
+    <td>ok</td>
+  </tr>
+  <tr>
+    <td>1.14</td>
+    <td>1.14</td>
+    <td>ok</td>
+  </tr>
+  </tr>
+</table>
