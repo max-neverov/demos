@@ -1,7 +1,7 @@
 # Go Versions
 
 Go Guild
-2 Apr 2020
+2 April 2020
 Max Neverov
 
 
@@ -14,7 +14,7 @@ Max Neverov
 ## Documentation
 
 .link https://github.com/golang/go/issues/30791 Go documentation is incomplete:
-: there is no explanation what go directive in `go.mod` means.
+: There is no explanation what go directive in `go.mod` means in the documentation and the series of blogs about modules.
 
 .image goversions/img/issue-30791.png
 
@@ -28,7 +28,7 @@ As usual, [the answer](https://github.com/golang/go/issues/30791#issuecomment-47
 
 
 ## Documentation
-: be persistent!
+: be persistent, read the whole thread!
 
 .link https://golang.org/doc/go1.12#modules go1.12 release
 
@@ -37,11 +37,11 @@ As usual, [the answer](https://github.com/golang/go/issues/30791#issuecomment-47
 
 
 ## Documentation
-: be persistent!!
+: be persistent, use go help!!
 
 **go help go.mod**
 
-> The expected language version, set by the go directive, determines which language features are available when compiling the module. Language features available in that version will be available for use.
+> The expected language version, set by the go directive, determines which language features are available when compiling the module. Language features available in that version will be available for use.\
 Language features removed in earlier versions, or added in later versions, will not be available. Note that the language version does not affect build tags, which are determined by the Go release being used.
 
 
@@ -107,11 +107,3 @@ Align local environment: go, go.mod, go-overlay.
 ## Links
 
 .link https://github.com/max-neverov/demos repo
-
-
-
-
-
-
-
-
