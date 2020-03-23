@@ -1,4 +1,4 @@
-module github.com/max-neverov/demos
+module github.com/max-neverov/demos/goversion
 
 go 1.13
 
