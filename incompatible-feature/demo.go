@@ -1,8 +1,10 @@
 package ab
 
-type A interface{ Foo() }
-type B interface{ Foo() }
-type AB interface {
-	A
-	B
+type a interface{ Foo() }
+type b interface{ Foo() }
+type ab interface {
+	a
+	b
 }
+
+type AB interface{}
