@@ -2,6 +2,7 @@ package repo
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -30,20 +31,36 @@ todo: how "github.com/fortytw2/dockertest" handles waiting a container to start?
 todo: how many dependencies testcontainers vs dockertest
 */
 
+type UserResource struct {
+	Name     string `db:"name"`
+	Age      int    `db:"age"`
+	SomeInfo []byte `db:"some_info"`
+}
+
 func Test_JsonB(t *testing.T) {
 	db := startPostgres(t)
 
-	u := model.User{Name: "Name", Age: 42, SomeInfo: &model.SomeInfo{Whatever: "useful info"}}
-	dbUser := model.User{}
+	expected := model.User{Name: "Name", Age: 42, SomeInfo: &model.SomeInfo{Whatever: "useful info"}}
+	ur := UserResource{}
 
 	// need returning part here, `no rows returned` otherwise;
 	// cannot use `returning *` because `missing destination name id in *model.User`
 	q := "insert into users(name,age,some_info) values($1, $2, $3) returning name, age, some_info"
-	err := db.Get(&dbUser, q, u.Name, u.Age, u.SomeInfo)
+
+	infoBytes, err := json.Marshal(expected.SomeInfo)
+	require.NoError(t, err)
+
+	err = db.Get(&ur, q, expected.Name, expected.Age, infoBytes)
 	assert.NoError(t, err)
 
-	assert.Equal(t, u, dbUser)
-	t.Logf("%#v", dbUser)
+	info := model.SomeInfo{}
+	err = json.Unmarshal(ur.SomeInfo, &info)
+	assert.NoError(t, err)
+
+	actual := model.User{Name: ur.Name, Age: ur.Age, SomeInfo: &info}
+
+	assert.Equal(t, expected, actual)
+	t.Logf("%#v", ur)
 }
 
 func startPostgres(t *testing.T) *sqlx.DB {
