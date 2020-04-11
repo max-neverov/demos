@@ -48,7 +48,6 @@ func Test_JsonB(t *testing.T) {
 
 	actual := model.User{Name: ur.Name, Age: ur.Age, SomeInfo: &info}
 
-	t.Logf("%#v", ur)
 	assert.Equal(t, expected, actual)
 }
 
