@@ -1,34 +1,23 @@
 package repo
 
 import (
-	"context"
+	"database/sql"
 	"encoding/json"
-	"fmt"
 	"testing"
 
-	"github.com/docker/go-connections/nat"
 	"github.com/jmoiron/sqlx"
-	"github.com/jmoiron/sqlx/reflectx"
 	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/wait"
 
 	"github.com/max-neverov/demos/jsonbnull/model"
 )
 
-const (
-	user              = "jsonbnull"
-	password          = "jsonbnull"
-	dbname            = "jsonbnull"
-	port     nat.Port = "5432/tcp"
-)
-
 /*
-todo: why 2 containers are started?
-todo: how "github.com/fortytw2/dockertest" handles waiting a container to start?
-todo: how many dependencies testcontainers vs dockertest
+   How many dependencies testcontainers vs dockertest?
+   testcontainers: 74 dependencies
+   dockertest: itself + github.com/lib/pq
+   makefile: no dependencies
 */
 
 type UserResource struct {
@@ -38,7 +27,7 @@ type UserResource struct {
 }
 
 func Test_JsonB(t *testing.T) {
-	db := startPostgres(t)
+	db := testDB(t)
 
 	expected := model.User{Name: "Name", Age: 42, SomeInfo: &model.SomeInfo{Whatever: "useful info"}}
 	ur := UserResource{}
@@ -59,59 +48,19 @@ func Test_JsonB(t *testing.T) {
 
 	actual := model.User{Name: ur.Name, Age: ur.Age, SomeInfo: &info}
 
-	assert.Equal(t, expected, actual)
 	t.Logf("%#v", ur)
+	assert.Equal(t, expected, actual)
 }
 
-func startPostgres(t *testing.T) *sqlx.DB {
-	var env = map[string]string{
-		"POSTGRES_PASSWORD": password,
-		"POSTGRES_USER":     user,
-		"POSTGRES_DB":       dbname,
-	}
-
-	req := testcontainers.ContainerRequest{
-		Image:        "postgres:12-alpine",
-		ExposedPorts: []string{string(port)},
-		Env:          env,
-		WaitingFor:   wait.NewHostPortStrategy(port),
-	}
-
-	ctx := context.Background()
-
-	pg, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
-		ContainerRequest: req,
-		Started:          true,
-	})
+func testDB(t *testing.T) *sqlx.DB {
+	db, err := sql.Open("postgres", "user=jsonbnull password='jsonbnull' host=localhost dbname=jsonbnull port=5432 sslmode=disable")
 	require.NoError(t, err)
+	require.NoError(t, db.Ping())
 
-	t.Cleanup(func() { pg.Terminate(ctx) })
+	dbx := sqlx.NewDb(db, "postgres")
 
-	host, err := pg.Host(ctx)
-	require.NoError(t, err)
-
-	port, err := pg.MappedPort(ctx, port)
-	require.NoError(t, err)
-
-	dbURL := fmt.Sprintf(
-		"user=%s password='%s' host=%s dbname=%s port=%s sslmode=disable",
-		user, password, host, dbname, port.Port(),
-	)
-
-	db, err := sqlx.Connect("postgres", dbURL)
-	require.NoError(t, err)
-	t.Cleanup(func() { db.Close() })
-	db.Mapper = reflectx.NewMapper("db")
-
-	err = initDB(db)
-	require.NoError(t, err)
-
-	return db
-}
-
-func initDB(db *sqlx.DB) error {
 	q := `
-create table users
+create table if not exists users
 (
     id        serial,
     name      text,
@@ -119,6 +68,17 @@ create table users
     some_info jsonb
 );
 `
-	_, err := db.Exec(q)
-	return err
+	_, err = dbx.Exec(q)
+	require.NoError(t, err)
+
+	// no cleanup: need to show result in the DB
+	//t.Cleanup(func() {
+	//	q := `truncate users`
+	//	_, err := dbx.Exec(q)
+	//	if err != nil {
+	//		t.Logf("fail to cleanup db: %+v", err)
+	//	}
+	//})
+
+	return dbx
 }
