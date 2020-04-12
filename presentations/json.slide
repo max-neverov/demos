@@ -1,0 +1,50 @@
+# Json rtfm
+
+Go Guild
+7 May 2020
+Max Neverov
+
+
+## This talk
+
+- Json rtfm
+- JSON rtfm
+- JSON RTFM
+
+
+## Documentation
+
+.link https://golang.org/pkg/encoding/json/#Unmarshal Unmarshal doc
+> Unmarshal parses the JSON-encoded data and stores the result in the value pointed to by v. \
+To unmarshal JSON into a struct, Unmarshal matches incoming object keys to the keys used by Marshal,
+preferring an exact match but also accepting a case-insensitive match. \
+Array and slice values encode as JSON arrays, except that []byte encodes as a base64-encoded string, and a nil slice encodes as the null JSON value.
+
+## Bug #1
+
+[issue#27172](https://github.com/golang/go/issues/27172): clarify documentation around pre-populated field values
+
+.play -edit ../jsonbnull/pre_populated_fields.go /START OMIT/,/END OMIT/
+
+
+## Bug #2
+
+[issue#14750](https://github.com/golang/go/issues/14750): parser ignores the case of member names
+
+.play -edit ../jsonbnull/ignore_case.go /START OMIT/,/END OMIT/
+
+
+## JSONB Example
+
+\
+**Demo**
+
+## Conclusion
+
+\
+rtfm
+
+
+## Links
+
+.link https://github.com/max-neverov/demos repo
