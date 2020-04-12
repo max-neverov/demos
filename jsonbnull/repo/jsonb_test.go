@@ -42,11 +42,11 @@ func Test_JsonB(t *testing.T) {
 	err = db.Get(&ur, q, expected.Name, expected.Age, infoBytes)
 	assert.NoError(t, err)
 
-	info := model.SomeInfo{}
+	info := &model.SomeInfo{}
 	err = json.Unmarshal(ur.SomeInfo, &info)
 	assert.NoError(t, err)
 
-	actual := model.User{Name: ur.Name, Age: ur.Age, SomeInfo: &info}
+	actual := model.User{Name: ur.Name, Age: ur.Age, SomeInfo: info}
 
 	assert.Equal(t, expected, actual)
 }
