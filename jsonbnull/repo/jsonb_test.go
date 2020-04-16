@@ -32,8 +32,6 @@ func Test_JsonB(t *testing.T) {
 	expected := model.User{Name: "Name", Age: 42, SomeInfo: &model.SomeInfo{Whatever: "useful info"}}
 	ur := UserResource{}
 
-	// need returning part here, `no rows returned` otherwise;
-	// cannot use `returning *` because `missing destination name id in *model.User`
 	q := "insert into users(name,age,some_info) values($1, $2, $3) returning name, age, some_info"
 
 	infoBytes, err := json.Marshal(expected.SomeInfo)
@@ -70,14 +68,7 @@ create table if not exists users
 	_, err = dbx.Exec(q)
 	require.NoError(t, err)
 
-	// no cleanup: need to show result in the DB
-	//t.Cleanup(func() {
-	//	q := `truncate users`
-	//	_, err := dbx.Exec(q)
-	//	if err != nil {
-	//		t.Logf("fail to cleanup db: %+v", err)
-	//	}
-	//})
+	t.Cleanup(func() { db.Close() })
 
 	return dbx
 }
